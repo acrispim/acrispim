@@ -1,0 +1,32 @@
+# Gera a cobrinha que percorre o gráfico de contribuições e publica os SVGs na
+# branch `output`, de onde o README os lê. Actions fixadas por SHA.
+name: cobrinha
+
+on:
+  schedule:
+    - cron: "23 5 * * *" # todo dia, 02:23 em Brasília
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: [".github/workflows/snake.yml"]
+
+permissions:
+  contents: write
+
+jobs:
+  snake:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: Platane/snk/svg-only@d8f6715049803e982ee5ff501b6b9b7d5deeb09b # v3.5.0
+        with:
+          github_user_name: ${{ github.repository_owner }}
+          outputs: |
+            dist/snake.svg?palette=github-light&color_snake=#3b55c9&color_dots=#ebedf0,#c8d1f5,#9fb0ef,#6f86e0,#3b55c9
+            dist/snake-dark.svg?palette=github-dark&color_snake=#93a3f5&color_dots=#161b22,#1b2a44,#24427a,#3b62b8,#93a3f5
+      - uses: crazy-max/ghaction-github-pages@1d6ee9b181a81033a16bd707a1401afa978daab4 # v5.0.0
+        with:
+          target_branch: output
+          build_dir: dist
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

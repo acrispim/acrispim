@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="185" height="28" viewBox="0 0 185 28" role="img" aria-labelledby="t d"><title id="t">contact@crispim.dev</title><desc id="d">contact@crispim.dev</desc><defs><pattern id="grid" width="28" height="28" patternUnits="userSpaceOnUse"><path d="M28 0H0V28" fill="none" stroke="#1d2634" stroke-opacity=".5"/></pattern></defs><style>
+text{font-family:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,'DejaVu Sans Mono',monospace}.serif{font-family:'Instrument Serif',Georgia,'Times New Roman',serif;font-style:italic}
+.rise{animation:rise .8s ease-out both}
+.pulse{animation:pulse 2.4s ease-in-out infinite}
+@keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes pulse{50%{opacity:.25}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes travel{to{stroke-dashoffset:-100}}
+
+.meridian{transform-box:fill-box;transform-origin:center;animation:turn 3s ease-in-out infinite}
+@keyframes turn{50%{transform:scaleX(.15)}}
+.accent{stroke-dasharray:18 82;animation:travel 6s linear infinite}
+@media(prefers-reduced-motion:reduce){*{animation:none!important}}</style><rect x=".5" y=".5" width="184" height="27" rx="6" fill="#0f141d" stroke="#1d2634"/><g class="pulse"><rect x="7.5" y="9.5" width="13" height="9" rx="1.5" fill="none" stroke="#93a3f5"/><path d="M8 10.5L14 15L20 10.5" fill="none" stroke="#93a3f5"/></g><path d="M28.5 6V22" stroke="#1d2634"/><text x="38" y="18.5" font-size="12" fill="#e6edf3">contact@crispim.dev</text><path class="accent" d="M6 27.5H179" stroke="#93a3f5" pathLength="100"/></svg>
