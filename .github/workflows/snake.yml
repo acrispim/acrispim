@@ -1,10 +1,10 @@
-# Gera a cobrinha que percorre o gráfico de contribuições e publica os SVGs na
-# branch `output`, de onde o README os lê. Actions fixadas por SHA.
-name: cobrinha
+# Generates the snake that eats the contribution graph and publishes the SVGs
+# to the `output` branch, where the README reads them from. Actions pinned by SHA.
+name: snake
 
 on:
   schedule:
-    - cron: "23 5 * * *" # todo dia, 02:23 em Brasília
+    - cron: "23 5 * * *" # daily, 02:23 Brasília time
   workflow_dispatch:
   push:
     branches: [main]

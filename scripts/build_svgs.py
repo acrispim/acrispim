@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
-"""Gera os SVGs animados do README de perfil em assets/.
+"""Builds the animated SVGs of the profile README into assets/.
 
-Uso: python3 scripts/build_svgs.py
+Usage: python3 scripts/build_svgs.py
 
-Paleta e fontes seguem o crispim.dev. A animação é só CSS dentro do SVG, que o
-GitHub executa quando a imagem é exibida num <img>. Regras que valem para todas
-as peças:
-  - o estado base de cada elemento é o estado FINAL e visível; a animação parte
-    do estado escondido com `animation-fill-mode: both`. Onde a animação não
-    corre (prefers-reduced-motion, app que só rasteriza o SVG), tudo aparece;
-  - textos cuja largura importa para a animação levam `textLength`, para não
-    depender da fonte monoespaçada que o visitante tiver instalada.
+Palette and fonts follow crispim.dev. Animation is CSS only, inside the SVG,
+which GitHub runs when the image is shown in an <img>. Rules for every piece:
+  - each element's base style is its FINAL, visible state; the animation starts
+    from the hidden state with `animation-fill-mode: both`. Wherever animation
+    does not run (prefers-reduced-motion, apps that only rasterise the SVG),
+    everything still shows;
+  - text whose width matters to the animation gets `textLength`, so it does not
+    depend on which monospace font the visitor has installed.
 """
 import math
 from html import escape
@@ -25,7 +25,7 @@ COLORS = {
 }
 MONO = "'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,'DejaVu Sans Mono',monospace"
 SERIF = "'Instrument Serif',Georgia,'Times New Roman',serif"
-CW = 0.6  # largura de um caractere monoespaçado, em em
+CW = 0.6  # width of one monospace character, in em
 
 BASE_CSS = """
 text{font-family:MONO}.serif{font-family:SERIF;font-style:italic}
@@ -40,7 +40,7 @@ REDUCED = "@media(prefers-reduced-motion:reduce){*{animation:none!important}}"
 
 
 def fill(s: str) -> str:
-    """Troca os nomes da paleta (BG, ACC…) e das fontes pelos valores."""
+    """Replaces palette names (BG, ACC…) and font names with their values."""
     s = s.replace("MONO", MONO).replace("SERIF", SERIF)
     for k in sorted(COLORS, key=len, reverse=True):
         s = s.replace("$" + k, COLORS[k])
@@ -60,7 +60,7 @@ def svg(w, h, title, desc, css, body, panel=True):
 
 
 def tw(text, size):
-    """Largura nominal de um texto monoespaçado."""
+    """Nominal width of a monospace string."""
     return round(len(text) * size * CW, 1)
 
 
@@ -76,12 +76,12 @@ def hero():
     who_x = 28 + 9 * cw
     who_w = 6 * cw
 
-    # pipeline: commits atravessam os gates; ameaças param num gate e somem
+    # pipeline: commits go through the gates; threats stop at a gate and vanish
     x0, x1, ty = 40, 800, 260
     span = x1 - x0
     gates = [(260, "SAST"), (420, "SCA"), (580, "DAST"), (740, "POLICY")]
     period = 8.0
-    threats = [(0, 1.0), (2, 5.0), (3, 3.0)]  # (índice do gate, atraso em s)
+    threats = [(0, 1.0), (2, 5.0), (3, 3.0)]  # (gate index, delay in s)
 
     css = f"""
 .cover{{opacity:0;animation:cover .9s steps(6) .5s both}}
@@ -98,25 +98,25 @@ def hero():
 .ticker{{animation:ticker 40s linear infinite}}
 """
     body = []
-    # barra do terminal
+    # terminal title bar
     body.append('<circle cx="22" cy="18" r="5" fill="$RED" opacity=".8"/>'
                 '<circle cx="40" cy="18" r="5" fill="$AMBER" opacity=".8"/>'
                 '<circle cx="58" cy="18" r="5" fill="$GREEN" opacity=".8"/>'
                 '<text x="80" y="22" font-size="11" fill="$DIM">~/card — bash</text>'
                 '<path d="M1 34.5H899" stroke="$BD"/>'
                 '<circle class="pulse" cx="746" cy="18" r="4" fill="$GREEN"/>'
-                '<text x="758" y="22" font-size="11" fill="$TX">aceitando projetos</text>')
-    # $ whoami digitado
+                '<text x="758" y="22" font-size="11" fill="$TX">accepting projects</text>')
+    # typed $ whoami
     body.append(f'<text x="28" y="72" font-size="{fs}" fill="$ACC">~/card</text>'
                 f'<text x="{28 + 7 * cw}" y="72" font-size="{fs}" fill="$GREEN">$</text>'
                 f'<text x="{who_x}" y="72" font-size="{fs}" fill="$HI" textLength="{who_w}" lengthAdjust="spacingAndGlyphs">whoami</text>'
                 f'<rect class="cover" x="{who_x + who_w}" y="54" width="{who_w + 14}" height="24" fill="$BG"/>'
                 f'<rect class="cursor" x="{who_x + who_w + 3}" y="57" width="9" height="19" fill="$ACC" opacity=".9"/>')
-    # identidade
+    # identity
     body.append('<text class="serif rise" style="animation-delay:1.4s" x="26" y="130" font-size="50" fill="$HI">Alexandre Crispim</text>'
                 '<text class="rise" style="animation-delay:1.7s" x="28" y="162" font-size="15" fill="$ACC">DevSecOps · SRE · Platform Engineering</text>'
-                '<text class="rise" style="animation-delay:1.9s" x="28" y="188" font-size="12" fill="$DIM">Curitiba · BR · remoto global</text>')
-    # radar do SOC
+                '<text class="rise" style="animation-delay:1.9s" x="28" y="188" font-size="12" fill="$DIM">Curitiba · BR · global remote</text>')
+    # SOC radar
     blips = [(70, 40), (215, 52), (320, 28)]
     radar = ['<g transform="translate(770 112)">',
              '<circle r="66" fill="$P1" stroke="$BD"/><circle r="44" fill="none" stroke="$BD"/>'
@@ -131,7 +131,7 @@ def hero():
                  '<text x="770" y="198" font-size="10" fill="$DIM" text-anchor="middle">$ tail -f /var/log/soc</text>')
     body.append("".join(radar))
     # ticker
-    tick = ("deploy → prod ✓ · trivy: 0 critical · slo 99,99% · argocd: synced · falco: 0 alerts · "
+    tick = ("deploy → prod ✓ · trivy: 0 critical · slo 99.99% · argocd: synced · falco: 0 alerts · "
             "sbom: signed · kyverno: enforced · gitops drift: none · ")
     tlen = tw(tick, 11)
     css += f"@keyframes ticker{{to{{transform:translateX(-{tlen}px)}}}}\n"
@@ -152,7 +152,7 @@ def hero():
         pipe.append(f'<g class="flow" style="animation-delay:-{i * period / 4:g}s">'
                     f'<circle cx="{x0}" cy="{ty}" r="8" fill="$GREEN" opacity=".22"/>'
                     f'<circle cx="{x0}" cy="{ty}" r="4.5" fill="$GREEN"/></g>')
-    # ameaças: (índice do gate, atraso). Mesma velocidade dos commits.
+    # threats move at the same speed as the commits
     for k, (gi, delay) in enumerate(threats):
         gx = gates[gi][0]
         dist = gx - 6 - x0
@@ -170,23 +170,23 @@ def hero():
     for gx, _ in gates:
         cls = gate_cls.get(gx, "")
         pipe.append(f'<rect class="{cls}" x="{gx - 3}" y="{ty - 12}" width="6" height="24" rx="2" fill="$P2" stroke="$GATE"/>')
-    pipe.append(f'<text x="876" y="290" font-size="10" fill="$DIM" text-anchor="end">ameaças em prod: <tspan fill="$GREEN">0</tspan></text>')
+    pipe.append(f'<text x="876" y="290" font-size="10" fill="$DIM" text-anchor="end">threats in prod: <tspan fill="$GREEN">0</tspan></text>')
     body.append("".join(pipe))
 
     return svg(W, H, "$ whoami — Alexandre Crispim",
-               "Alexandre Crispim, DevSecOps, SRE e Platform Engineering, em Curitiba, com trabalho remoto global. "
-               "Um pipeline animado leva commits até produção e barra as ameaças nos gates de segurança.",
+               "Alexandre Crispim, DevSecOps, SRE and Platform Engineering, based in Curitiba, Brazil, working remotely worldwide. "
+               "An animated pipeline carries commits to production and blocks threats at the security gates.",
                css, "".join(body))
 
 
-# ─── números ─────────────────────────────────────────────────────────────────
+# ─── numbers ─────────────────────────────────────────────────────────────────
 METRICS = [
-    ("6+", "ACC", "anos de infra", "crítica em produção"),
-    ("99,99%", "CYAN", "disponibilidade —", "tráfego aéreo DECEA"),
-    ("10M+", "GREEN", "requisições/dia", "no API gateway"),
-    ("1TB+", "AMBER", "logs processados", "por mês"),
-    ("−65%", "ACC", "tempo de detecção", "(MTTD)"),
-    ("−25%", "CYAN", "custo mensal", "de cloud"),
+    ("6+", "ACC", "years of critical", "infra in production"),
+    ("99.99%", "CYAN", "availability —", "air traffic · DECEA"),
+    ("10M+", "GREEN", "requests/day", "via API gateway"),
+    ("1TB+", "AMBER", "logs processed", "per month"),
+    ("−65%", "ACC", "detection time", "(MTTD)"),
+    ("−25%", "CYAN", "monthly cloud", "spend"),
 ]
 
 
@@ -198,7 +198,7 @@ def metrics():
 .scan{animation:scan 7s ease-in-out 2s infinite}
 @keyframes scan{60%,100%{transform:translateX(980px)}}
 """
-    body = [header(W, "$ kubectl get results", "Números, não adjetivos"),
+    body = [header(W, "$ kubectl get results", "Numbers, not adjectives"),
             '<linearGradient id="sg"><stop offset="0" stop-color="$ACC" stop-opacity="0"/>'
             '<stop offset=".5" stop-color="$ACC" stop-opacity=".09"/><stop offset="1" stop-color="$ACC" stop-opacity="0"/></linearGradient>']
     for i, (num, col, l1, l2) in enumerate(METRICS):
@@ -211,21 +211,21 @@ def metrics():
                     f'<text x="{x + 14}" y="112" font-size="10" fill="$DIM">{escape(l1)}</text>'
                     f'<text x="{x + 14}" y="125" font-size="10" fill="$DIM">{escape(l2)}</text></g>')
     body.append('<rect class="scan" x="-80" y="48" width="80" height="84" fill="url(#sg)"/>')
-    return svg(W, H, "Números, não adjetivos",
-               "Mais de 6 anos de infraestrutura crítica em produção; 99,99% de disponibilidade no controle de tráfego aéreo (DECEA); "
-               "mais de 10 milhões de requisições por dia no API gateway; mais de 1 TB de logs por mês; "
-               "tempo de detecção 65% menor; custo mensal de cloud 25% menor.",
+    return svg(W, H, "Numbers, not adjectives",
+               "6+ years of critical infrastructure in production; 99.99% availability in air traffic control (DECEA); "
+               "10M+ requests per day through the API gateway; 1 TB+ of logs processed per month; "
+               "65% faster detection (MTTD); 25% lower monthly cloud spend.",
                css, "".join(body))
 
 
-# ─── carreira ────────────────────────────────────────────────────────────────
+# ─── career ─────────────────────────────────────────────────────────────────
 CAREER = [
-    ("2012", "Força Aérea (FAB)", "soldado"),
+    ("2012", "Brazilian Air Force", "soldier"),
     ("2017", "Exati Tecnologia", "full stack"),
     ("2020", "Delivery Center", "SRE · DevOps"),
     ("2022", "DECEA", "SRE · DevOps"),
-    ("2023 → hoje", "Ink&Code", "fundador"),
-    ("2024 → hoje", "Arlequim Technologies", "SRE · platform"),
+    ("2023 → now", "Ink&Code", "founder"),
+    ("2024 → now", "Arlequim Technologies", "SRE · platform"),
 ]
 
 
@@ -242,7 +242,7 @@ def career():
 .sonar{{transform-box:fill-box;transform-origin:center;animation:sonar 2.6s ease-out {draw + .6}s infinite both}}
 @keyframes sonar{{0%{{transform:scale(.5);opacity:0}}20%{{opacity:.8}}100%{{transform:scale(2.4);opacity:0}}}}
 """
-    body = [header(W, "$ git log --oneline career/", "De soldado a fundador"),
+    body = [header(W, "$ git log --oneline career/", "From soldier to founder"),
             f'<path d="M{xa} {y}H{xb}" stroke="$BD" stroke-width="2"/>',
             f'<path class="line" d="M{xa} {y}H{xb}" stroke="$ACC" stroke-width="2"/>',
             f'<path class="sig" d="M{xa} {y}H{xb}" stroke="$HI" stroke-opacity=".5" pathLength="100"/>']
@@ -262,19 +262,19 @@ def career():
                     f'<text x="{x}" y="127" font-size="11.5" fill="$TX" text-anchor="middle">{escape(org)}</text>'
                     f'<text x="{x}" y="144" font-size="10" fill="$DIM" text-anchor="middle">{escape(role)}</text></g>')
     body.append(f'<text class="rise" style="animation-delay:{draw + .5}s" x="24" y="174" font-size="10" fill="$DIM">'
-                '<tspan fill="$GREEN">+</tspan> em formação: CST Defesa Cibernética (FIAP) · forense de rede e computação (HackerSec)</text>')
-    return svg(W, H, "De soldado a fundador",
-               "Carreira: Força Aérea Brasileira (2012, soldado); Exati Tecnologia (2017, full stack); Delivery Center (2020, SRE e DevOps); "
-               "DECEA (2022, SRE e DevOps); Ink&Code (desde 2023, fundador); Arlequim Technologies (desde 2024, SRE e platform). "
-               "Em formação: CST Defesa Cibernética (FIAP) e forense de rede e computação (HackerSec).",
+                '<tspan fill="$GREEN">+</tspan> in progress: Cyber Defense degree (FIAP) · network &amp; computer forensics (HackerSec)</text>')
+    return svg(W, H, "From soldier to founder",
+               "Career: Brazilian Air Force (2012, soldier); Exati Tecnologia (2017, full stack); Delivery Center (2020, SRE and DevOps); "
+               "DECEA (2022, SRE and DevOps); Ink&Code (since 2023, founder); Arlequim Technologies (since 2024, SRE and platform). "
+               "In progress: Cyber Defense degree (FIAP) and network & computer forensics (HackerSec).",
                css, "".join(body))
 
 
 # ─── stack ───────────────────────────────────────────────────────────────────
 STACK = [
-    ("plataforma", ["Kubernetes", "Helm", "ArgoCD", "Terraform", "Ansible", "Nomad", "Consul", "Proxmox", "Traefik", "AWS · GCP"]),
-    ("segurança", ["Trivy", "Falco", "Kyverno", "SAST/DAST", "SBOM", "Wazuh", "Authentik", "Infisical", "Zero Trust"]),
-    ("código", ["Python", "Django", "FastAPI", "TypeScript", "React", "Vue.js", "Spring Boot", "Rust", "Three.js"]),
+    ("platform", ["Kubernetes", "Helm", "ArgoCD", "Terraform", "Ansible", "Nomad", "Consul", "Proxmox", "Traefik", "AWS · GCP"]),
+    ("security", ["Trivy", "Falco", "Kyverno", "SAST/DAST", "SBOM", "Wazuh", "Authentik", "Infisical", "Zero Trust"]),
+    ("code", ["Python", "Django", "FastAPI", "TypeScript", "React", "Vue.js", "Spring Boot", "Rust", "Three.js"]),
 ]
 
 
@@ -284,7 +284,7 @@ def stack():
 .glow{stroke-dasharray:14 86;animation:glow 7s linear infinite both}
 @keyframes glow{0%{stroke-dashoffset:0;opacity:0}2%{opacity:1}12%{stroke-dashoffset:-100;opacity:1}14%,100%{stroke-dashoffset:-100;opacity:0}}
 """
-    body = [header(W, "$ cat stack.yml", "Ferramentas do dia a dia")]
+    body = [header(W, "$ cat stack.yml", "Tools of the trade")]
     k = 0
     for r, (label, chips) in enumerate(STACK):
         y = 52 + r * 40
@@ -300,10 +300,10 @@ def stack():
                         f'fill="none" stroke="$ACC" pathLength="100"/>')
             x += w + 8
             k += 1
-        assert x <= W - 16, f"linha {label} passou da largura: {x}"
-    return svg(W, H, "Ferramentas do dia a dia",
-               "Plataforma: " + ", ".join(STACK[0][1]) + ". Segurança: " + ", ".join(STACK[1][1])
-               + ". Código: " + ", ".join(STACK[2][1]) + ".", css, "".join(body))
+        assert x <= W - 16, f"row {label} is wider than the panel: {x}"
+    return svg(W, H, "Tools of the trade",
+               "Platform: " + ", ".join(STACK[0][1]) + ". Security: " + ", ".join(STACK[1][1])
+               + ". Code: " + ", ".join(STACK[2][1]) + ".", css, "".join(body))
 
 
 # ─── badges ──────────────────────────────────────────────────────────────────
